@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='month.css') }}">
+<div class="calendar-container">
+    <div class="calendar-header">
+        <h1>{{curMonth}}<button></button></h1>
+        <p>{{curYear}}</p>
+    </div>
+    <div class="calendar"><span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
+        {% for i in range(0, 35) %}
+            <div class="day">{{days[i]}}
+                {% if tasks[i] != '' %}
+                    <section class="task">
+                        {{tasks[i]|safe}}
+                    </section>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
