@@ -7,4 +7,6 @@ print("Opened database successfully")
 
 conn.execute('CREATE TABLE TASK (id INTEGER primary key AUTOINCREMENT, year TEXT, month TEXT, day TEXT, overview TEXT, detail TEXT)')
 print("Table created successfully")
+
+conn.commit()
 conn.close()

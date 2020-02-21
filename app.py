@@ -1,12 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 import sqlite3 as sql
 import calendar
 
+DOMAIN_NAME = 'http://127.0.0.1:5000/'
 app = Flask(__name__)
 
-@app.route('/hello/<int:score>')
-def hello_name(score):
-    return render_template('hello.html', marks = (score, score))
 
 def getTask(year, month, day):
     con = sql.connect("database.db")
@@ -17,7 +15,8 @@ def getTask(year, month, day):
     ret = ''
 
     for eve in ls:
-        ret = ret + '<a href=\"task/' + str(eve[0]) + '\">' + str(eve[1]) + '</a><br>'
+        ret = ret + '<a href=\"' + '../../task/' + str(eve[0]) + '\">' + str(eve[1]) + '</a><br>'
+        print(ret)
     return ret
 
 @app.route('/month/<int:year>/<int:month>')
@@ -49,6 +48,23 @@ def show_Detail(id):
         a = i
     print(a)
     return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4])
+
+@app.route('/')
+def show_Index():
+    return render_template('index.html')
+
+
+@app.route('/result', methods=("GET", "POST"))
+def result():
+    if(request.method == "GET"):
+        return redirect('/')
+    form = request.form.to_dict()
+    return redirect('/month/' + str(form['Year']) + '/' + form['Month'])
+
+
+
+
+
 
 
 if __name__ == '__main__':
