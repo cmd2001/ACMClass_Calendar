@@ -17,7 +17,7 @@ body {
     width: 100%;
     grid-template-columns: repeat(7, minmax(120px, 1fr));
     grid-template-rows: 50px;
-    grid-auto-rows: 120px;
+    grid-auto-rows: 50px;
     overflow: auto;
     &-container {
         width: 90%;
@@ -129,5 +129,10 @@ body {
     border-left-style: solid;
     font-size: 14px;
     position: relative;
+    text-decoration:none;
     
+}
+a
+{
+    text-decoration: none;
 }
