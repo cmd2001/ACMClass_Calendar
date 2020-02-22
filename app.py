@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect
+from datetime import  datetime
 import sqlite3 as sql
 import calendar
+
 
 DOMAIN_NAME = 'http://127.0.0.1:5000/'
 app = Flask(__name__)
 
 
-def getTask(year, month, day):
+def get_Task(year, month, day):
     con = sql.connect("database.db")
     cur = con.cursor()
 
@@ -18,6 +20,22 @@ def getTask(year, month, day):
         ret = ret + '<a href=\"' + '../../task/' + str(eve[0]) + '\">' + str(eve[1]) + '</a><br>'
         print(ret)
     return ret
+
+def gen_Prv_Month(year, month):
+    month = month - 1
+    if month == 0:
+        year = year - 1
+        month = 12
+    return '../' + str(year) + '/' + str(month)
+
+
+def gen_Nxt_Month(year, month):
+    month = month + 1
+    if month == 13:
+        year = year + 1
+        month = 1
+    return '../' + str(year) + '/' + str(month)
+
 
 @app.route('/month/<int:year>/<int:month>')
 def show_Month(year, month):
@@ -32,11 +50,15 @@ def show_Month(year, month):
             tasks.append('')
     for i in range(1, daySiz + 1):
         days.append(str(i))
-        tasks.append(getTask(year, month, i))
+        tasks.append(get_Task(year, month, i))
     while len(days) < 35:
         days.append('')
         tasks.append('')
-    return render_template('month.html', curMonth = monthNames[month - 1], curYear = year, days = days, tasks = tasks)
+    return render_template('month.html', curMonth = monthNames[month - 1], curYear = year, days = days, tasks = tasks,
+                           link_prv_month = gen_Prv_Month(year, month), link_nxt_month = gen_Nxt_Month(year, month))
+
+def gen_Link_Month(year, month):
+    return '../month/' + str(year) + '/' + str(month)
 
 @app.route('/task/<int:id>')
 def show_Detail(id):
@@ -47,11 +69,15 @@ def show_Detail(id):
     for i in ls:
         a = i
     print(a)
-    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4])
+    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4],
+                           link_month = gen_Link_Month(a[0], a[1]))
 
 @app.route('/')
 def show_Index():
-    return render_template('index.html')
+    curYear = datetime.now().year
+    curMonth = datetime.now().month
+    return render_template('index.html', cur_Link = 'month/' + str(curYear) + '/' + str(curMonth))
+
 
 
 @app.route('/result', methods=("GET", "POST"))
@@ -60,12 +86,6 @@ def result():
         return redirect('/')
     form = request.form.to_dict()
     return redirect('/month/' + str(form['Year']) + '/' + form['Month'])
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug = True)

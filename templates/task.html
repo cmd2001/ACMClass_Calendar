@@ -19,7 +19,18 @@
                     <div class="col-lg-8 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                <h1>事件详情</span></h1>
+                                <h1>事件详情</span>
+                                    <a href={{link_month}} target="_blank">
+                                        <button type="button">
+                                            Back to Month
+                                        </button>
+                                    </a>
+                                    <a href="../" target="_blank">
+                                        <button type="button">
+                                            Home Page
+                                        </button>
+                                    </a>
+                                </h1>
                             </div>
                         </div>
                     </div>
@@ -35,7 +46,7 @@
                                             <div class="form-group">
                                                 <h1>{{overview}}</h1>
                                                 <h2>Date: {{year}}, {{month}}, {{day}}</h2>
-                                                <h3>{{detail}}</h3>
+                                                <h3>{{detail|safe}}</h3>
                                             </div>
                                         </form>
                                     </div>

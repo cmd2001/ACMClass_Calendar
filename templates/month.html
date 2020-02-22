@@ -1,7 +1,27 @@
+<head>
+    <title>{{curMonth}}.{{curYear}}</title>
+</head>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='month.css') }}">
 <div class="calendar-container">
     <div class="calendar-header">
-        <h1>{{curMonth}}<button></button></h1>
+        <h1>{{curMonth}}
+            <a href={{link_prv_month}} target="_blank">
+                <button type="button">
+                    Previous Month
+                </button>
+            </a>
+            <a href={{link_nxt_month}} target="_blank">
+                <button type="button">
+                    Next Month
+                </button>
+            </a>
+            <a href="../../" target="_blank">
+                <button type="button">
+                    Home Page
+                </button>
+            </a>
+        </h1>
         <p>{{curYear}}</p>
     </div>
     <div class="calendar"><span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
