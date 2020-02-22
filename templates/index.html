@@ -1,14 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>日程管理</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/task.css" rel="stylesheet">
 </head>
+
 <body>
-        <form action = "/result" method="post">
-        <p>Year <input type = "text" name = "Year" /></p>
-        <p>Month <input type = "text" name = "Month" /></p>
-        <p><input type = "submit" value = "submit" /></p>
-</form>
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h1>日程管理</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <!-- /# card -->
+                            <div class="card">
+                                <form action="/result" method="post">
+                                    <h5>Year：<input class="form-control input-default" type="text" name="Year" required="required"></h5>
+                                    <h5>Month：<input class="form-control input-default" type="text" name="Month" required="required"></h5>
+                                    <button type="submit" class="btn btn-default">转到</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© ACM Class 2019</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
 </body>
+
 </html>
