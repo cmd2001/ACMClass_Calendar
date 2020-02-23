@@ -3,26 +3,27 @@
 </head>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='month.css') }}">
+<link href="../../static/bootstrap.min.css" rel="stylesheet">
+<link href="../../static/task.css" rel="stylesheet">
 <div class="calendar-container">
     <div class="calendar-header">
-        <h1>{{curMonth}}
+        <h1>{{curMonth}}, {{curYear}}
             <a href={{link_prv_month}} target="_blank">
-                <button type="button">
-                    Previous Month
-                </button>
-            </a>
-            <a href={{link_nxt_month}} target="_blank">
-                <button type="button">
-                    Next Month
+                <button type="button" class="btn btn-primary btn-sm">
+                    < Previous Month
                 </button>
             </a>
             <a href="../../" target="_blank">
-                <button type="button">
+                <button type="button" class="btn btn-info btn-sm">
                     Home Page
                 </button>
             </a>
+            <a href={{link_nxt_month}} target="_blank">
+                <button type="button" class="btn btn-primary btn-sm">
+                    Next Month >
+                </button>
+            </a>
         </h1>
-        <p>{{curYear}}</p>
     </div>
     <div class="calendar"><span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
         {% for i in range(0, 35) %}
@@ -35,4 +36,7 @@
             </div>
         {% endfor %}
     </div>
+</div>
+<div class="footer">
+    <p>© ACM Class 2019</p>
 </div>
