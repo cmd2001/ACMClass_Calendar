@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <meta charset="utf-8">
-    <title>日程管理</title>
+    <title>Welcome to ACM Calendar!</title>
     <link href="../static/bootstrap.min.css" rel="stylesheet">
     <link href="../static/task.css" rel="stylesheet">
 </head>
@@ -14,7 +14,7 @@
                     <div class="col-lg-8 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                <h1>日程管理</h1>
+                                <h1>Welcome to ACM Calendar!</h1>
                             </div>
                         </div>
                     </div>
@@ -28,13 +28,12 @@
                                 <form action="/result" method="post">
                                     <h5>Year：<input class="form-control input-default" type="text" name="Year" required="required"></h5>
                                     <h5>Month：<input class="form-control input-default" type="text" name="Month" required="required"></h5>
-                                    <button type="submit" class="btn btn-default">转到</button>
+                                    <span><button type="submit" class="btn btn-primary">Go</button>
+                                        <a href={{cur_Link}} target="_blank">
+                                            <button type="button"  class="btn btn-info">Go to current month</button>
+                                        </a>
+                                    </span>
                                 </form>
-                                <a href={{cur_Link}} target="_blank">
-                                    <button type="button">
-                                        Jump to current month
-                                    </button>
-                                </a>
                             </div>
                         </div>
                         <!-- /# column -->
