@@ -1,8 +1,66 @@
-<form action="/admin/addtask" method="post">
-    <h5>Year<input type="text" name="year" required="required"></h5>
-    <h5>Month<input type="text" name="month" required="required"></h5>
-    <h5>Day<input type="text" name="day" required="required"></h5>
-    <h5>Overview<input type="text" name="overview" required="required"></h5>
-    <h5>detail<input type="text" name="detail" required="required"></h5>
-    <span><button type="submit">Submit</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin Add Tasks</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/task.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h1>Admin Add Tasks</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /# row -->
+                <section id="main-content">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <div class="card">
+                                <form role="form" action="/admin/addtask" method="post" class="col-lg-6">
+                                    Year<input class="form-control input-default" type="text" name="year" required="required">
+                                    Month<input class="form-control input-default" type="text" name="month" required="required">
+                                    Day<input class="form-control input-default" type="text" name="day" required="required">
+                                    Overview<input class="form-control input-default" type="text" name="overview" required="required">
+                                    Details<textarea class="form-control" name="detail"></textarea>
+                                    <button type="submit" class="btn btn-default">submit</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /# column -->
+                    </div>
+                    <!-- /# row -->
+
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="footer">
+                                <p>© ACM Class 2019</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+</body>
+
+</html>
