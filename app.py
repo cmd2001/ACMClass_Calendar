@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect, make_response
 from datetime import  datetime, timedelta
 import sqlite3 as sql
 import calendar
+from config import ADMIN_PASSWORD, COOKIE_LIVE_TIME
 
+cookiePool = set()
 
-DOMAIN_NAME = 'http://127.0.0.1:5000/'
-ADMIN_PASSWORD = 'admin'
 app = Flask(__name__)
 
 
@@ -87,6 +87,25 @@ def result():
     form = request.form.to_dict()
     return redirect('/month/' + str(form['Year']) + '/' + form['Month'])
 
+def checkCookiePool(x):
+    updateCookiePool()
+    return x in cookiePool
+
+def updateCookiePool():
+    cur = str(datetime.now() - timedelta(seconds=COOKIE_LIVE_TIME))
+    nw = []
+    for x in cookiePool:
+        if x >= cur:
+            nw.append(x)
+    cookiePool.clear()
+    for x in nw:
+        cookiePool.add(x)
+
+
+def insertCookiePool(x):
+    updateCookiePool()
+    cookiePool.add(x)
+
 @app.route('/login', methods=("GET", "POST"))
 def login():
     if request.method == "GET":
@@ -96,7 +115,9 @@ def login():
         return 'Wrong Password' # returning a pure text
     resp = make_response(redirect('/admin'))
     resp.set_cookie('status', 'login')
-    resp.set_cookie('time', str(datetime.now()))
+    retStr = str(datetime.now())
+    insertCookiePool(retStr)
+    resp.set_cookie('time', retStr)
     return resp
 
 @app.route('/admin')
@@ -105,8 +126,7 @@ def admin():
     if status != 'login':
         return 'Please login first' # returning a pure text
     loginTime = request.cookies.get('time')
-    thre = str(datetime.now() - timedelta(seconds=60))
-    if loginTime < thre:
+    if not checkCookiePool(loginTime):
         return 'Login status timed out' # returning a pure text
     return render_template('admin.html')
 
@@ -116,8 +136,7 @@ def addtask():
     if status != 'login':
         return 'Please login first' # returning a pure text
     loginTime = request.cookies.get('time')
-    thre = str(datetime.now() - timedelta(seconds=60))
-    if loginTime < thre:
+    if not checkCookiePool(loginTime):
         return 'Login status timed out' # returning a pure text
 
 
@@ -139,8 +158,7 @@ def deltask():
     if status != 'login':
         return 'Please login first' # returning a pure text
     loginTime = request.cookies.get('time')
-    thre = str(datetime.now() - timedelta(seconds=60))
-    if loginTime < thre:
+    if not checkCookiePool(loginTime):
         return 'Login status timed out' # returning a pure text
 
 
