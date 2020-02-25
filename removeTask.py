@@ -9,7 +9,7 @@ id = input()
 
 cur = conn.cursor()
 
-cur.execute("DELETE FROM TASK WHERE id = ?", id);
+cur.execute("DELETE FROM TASK WHERE id = ?", id)
 conn.commit()
 conn.close()
 

@@ -12,11 +12,11 @@ day = str(input())
 print("Please input Task Overview")
 overview = str(input())
 print("Please input Task Detail")
-detial = str(input())
+detail = str(input())
 
 cur = conn.cursor()
 
-cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail) VALUES (NULL, ?, ?, ?, ?, ?)", (year, month, day, overview, detial));
+cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail) VALUES (NULL, ?, ?, ?, ?, ?)", (year, month, day, overview, detail))
 conn.commit()
 conn.close()
 

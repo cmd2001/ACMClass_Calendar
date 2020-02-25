@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect
-from datetime import  datetime
+from flask import Flask, render_template, request, redirect, make_response
+from datetime import  datetime, timedelta
 import sqlite3 as sql
 import calendar
 
 
 DOMAIN_NAME = 'http://127.0.0.1:5000/'
+ADMIN_PASSWORD = 'admin'
 app = Flask(__name__)
 
 
@@ -18,7 +19,6 @@ def get_Task(year, month, day):
 
     for eve in ls:
         ret = ret + '<a href=\"' + '../../task/' + str(eve[0]) + '\">' + str(eve[1]) + '</a><br>'
-        print(ret)
     return ret
 
 def gen_Prv_Month(year, month):
@@ -86,6 +86,75 @@ def result():
         return redirect('/')
     form = request.form.to_dict()
     return redirect('/month/' + str(form['Year']) + '/' + form['Month'])
+
+@app.route('/login', methods=("GET", "POST"))
+def login():
+    if request.method == "GET":
+        return render_template('login.html')
+    form = request.form.to_dict()
+    if form['password'] != ADMIN_PASSWORD:
+        return 'Wrong Password' # returning a pure text
+    resp = make_response(redirect('/admin'))
+    resp.set_cookie('status', 'login')
+    resp.set_cookie('time', str(datetime.now()))
+    return resp
+
+@app.route('/admin')
+def admin():
+    status = request.cookies.get('status')
+    if status != 'login':
+        return 'Please login first' # returning a pure text
+    loginTime = request.cookies.get('time')
+    thre = str(datetime.now() - timedelta(seconds=60))
+    if loginTime < thre:
+        return 'Login status timed out' # returning a pure text
+    return render_template('admin.html')
+
+@app.route('/admin/addtask', methods=("GET", "POST"))
+def addtask():
+    status = request.cookies.get('status')
+    if status != 'login':
+        return 'Please login first' # returning a pure text
+    loginTime = request.cookies.get('time')
+    thre = str(datetime.now() - timedelta(seconds=60))
+    if loginTime < thre:
+        return 'Login status timed out' # returning a pure text
+
+
+    if request.method == "GET":
+        return render_template('addtask.html')
+    form = request.form.to_dict()
+    print(form)
+    con = sql.connect("database.db")
+    cur = con.cursor()
+    cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail) VALUES (NULL, ?, ?, ?, ?, ?)", (form['year'], form['month'], form['day'], form['overview'], form['detail']))
+    con.commit()
+    con.close()
+
+    return 'Task Added' # returning a pure text
+
+@app.route('/admin/deltask', methods=("GET", "POST"))
+def deltask():
+    status = request.cookies.get('status')
+    if status != 'login':
+        return 'Please login first' # returning a pure text
+    loginTime = request.cookies.get('time')
+    thre = str(datetime.now() - timedelta(seconds=60))
+    if loginTime < thre:
+        return 'Login status timed out' # returning a pure text
+
+
+    if request.method == "GET":
+        return render_template('deltask.html')
+    form = request.form.to_dict()
+
+    con = sql.connect("database.db")
+    cur = con.cursor()
+    cur.execute("DELETE FROM TASK WHERE id = ?", form['id'])
+    con.commit()
+    con.close()
+
+    return 'Task Deleted' # returning a pure text
 
 if __name__ == '__main__':
     app.run(debug = True)
