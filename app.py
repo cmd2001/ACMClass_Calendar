@@ -224,8 +224,8 @@ def convertDigit(x):
     return x
 def convertTask(x):
     ret = 'BEGIN:VEVENT\n'
-    ret = ret + 'DTSTART:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[5].split(':')[0]) + convertDigit(x[5].split(':')[1]) + '00Z\n'
-    ret = ret + 'DTDTEND:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[6].split(':')[0]) + convertDigit(x[6].split(':')[1]) + '00Z\n'
+    ret = ret + 'DTSTART:TZID=Asia/Shanghai:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[5].split(':')[0]) + convertDigit(x[5].split(':')[1]) + '00Z\n'
+    ret = ret + 'DTDTEND:TZID=Asia/Shanghai:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[6].split(':')[0]) + convertDigit(x[6].split(':')[1]) + '00Z\n'
     ret = ret + 'SUMMARY:' + x[3] + '\n'
     ret = ret + 'DESCRIPTION:' + x[4] + '\n'
     ret = ret + 'END:VEVENT\n'
