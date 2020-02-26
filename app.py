@@ -1,23 +1,33 @@
 from flask import Flask, render_template, request, redirect, make_response
-from datetime import  datetime, timedelta
+from datetime import datetime, timedelta
 import sqlite3 as sql
 import calendar
+from uuid import uuid4
 from config import ADMIN_PASSWORD, COOKIE_LIVE_TIME
 
-cookiePool = set()
+cookiePool = {}
 
 app = Flask(__name__)
 
 
+def takeThird(ele):
+    return ele[2]
 def get_Task(year, month, day):
     con = sql.connect("database.db")
     cur = con.cursor()
 
-    ls = cur.execute("SELECT id, overview from TASK where year = ? AND month = ? AND day = ?", (year, month, day))
+    ls = cur.execute("SELECT id, overview, startTime from TASK where year = ? AND month = ? AND day = ?", (year, month, day))
+
+    srt = []
+
+    for eve in ls:
+        srt.append(eve)
+
+    srt.sort(key=takeThird)
 
     ret = ''
 
-    for eve in ls:
+    for eve in srt:
         ret = ret + '<a href=\"' + '../../task/' + str(eve[0]) + '\">' + str(eve[1]) + '</a><br>'
     return ret
 
@@ -64,12 +74,11 @@ def gen_Link_Month(year, month):
 def show_Detail(id):
     con = sql.connect("database.db")
     cur = con.cursor()
-    ls = cur.execute("SELECT year, month, day, overview, detail from TASK where id = ?", str(id))
+    ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK where id = ?", str(id))
     a = []
     for i in ls:
         a = i
-    print(a)
-    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4],
+    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4], startTime = a[5], endTime = a[6],
                            link_month = gen_Link_Month(a[0], a[1]))
 
 @app.route('/')
@@ -94,17 +103,17 @@ def checkCookiePool(x):
 def updateCookiePool():
     cur = str(datetime.now() - timedelta(seconds=COOKIE_LIVE_TIME))
     nw = []
-    for x in cookiePool:
-        if x >= cur:
-            nw.append(x)
+    for key, value in cookiePool.items():
+        if value > cur:
+            nw.append((key, value))
     cookiePool.clear()
-    for x in nw:
-        cookiePool.add(x)
+    for key, value in nw:
+        cookiePool[key] = value
 
 
-def insertCookiePool(x):
+def insertCookiePool(key, value):
     updateCookiePool()
-    cookiePool.add(x)
+    cookiePool[key] = value
 
 @app.route('/login', methods=("GET", "POST"))
 def login():
@@ -115,9 +124,10 @@ def login():
         return 'Wrong Password' # returning a pure text
     resp = make_response(redirect('/admin'))
     resp.set_cookie('status', 'login')
+    userID = str(uuid4())
     retStr = str(datetime.now())
-    insertCookiePool(retStr)
-    resp.set_cookie('time', retStr)
+    insertCookiePool(userID, retStr)
+    resp.set_cookie('id', userID)
     return resp
 
 @app.route('/admin')
@@ -125,28 +135,63 @@ def admin():
     status = request.cookies.get('status')
     if status != 'login':
         return 'Please login first' # returning a pure text
-    loginTime = request.cookies.get('time')
-    if not checkCookiePool(loginTime):
-        return 'Login status timed out' # returning a pure text
+    userID = request.cookies.get('id')
+    if not checkCookiePool(userID):
+        return 'Login status timed out or invalid' # returning a pure text
     return render_template('admin.html')
+
+def valid(form):
+    if not form['year'].isdigit(): # not a number
+        return False
+    if int(form['year']) < 1000 or int(form['year']) > 9999: # out of range
+        return False
+    if not form['month'].isdigit():
+        return False
+    if int(form['month']) < 1 or int(form['month']) > 12:
+        return False
+    if not form['day'].isdigit():
+        return False
+    if int(form['day']) < 1 or int(form['day']) > 31:
+        return False
+    startTime = form['startTime'].split(':')
+    if len(startTime) != 2: # more or less ':'
+        return False
+    if not startTime[0].isdigit() or not startTime[1].isdigit():
+        return False
+    if int(startTime[0]) < 0 or int(startTime[0]) > 24:
+        return False
+    if int(startTime[1]) < 0 or int(startTime[1]) > 60:
+        return False
+    endTime = form['endTime'].split(':')
+    if len(endTime) != 2: # more or less ':'
+        return False
+    if not endTime[0].isdigit() or not endTime[1].isdigit():
+        return False
+    if int(endTime[0]) < 0 or int(endTime[0]) > 24:
+        return False
+    if int(endTime[1]) < 0 or int(endTime[1]) > 60:
+        return False
+    return True
 
 @app.route('/admin/addtask', methods=("GET", "POST"))
 def addtask():
     status = request.cookies.get('status')
     if status != 'login':
         return 'Please login first' # returning a pure text
-    loginTime = request.cookies.get('time')
-    if not checkCookiePool(loginTime):
-        return 'Login status timed out' # returning a pure text
+    userID = request.cookies.get('id')
+    if not checkCookiePool(userID):
+        return 'Login status timed out or invalid' # returning a pure text
 
 
     if request.method == "GET":
         return render_template('addtask.html')
     form = request.form.to_dict()
-    print(form)
+    if not valid(form):
+        return 'Illegal Inout' # returning a pure text
     con = sql.connect("database.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail) VALUES (NULL, ?, ?, ?, ?, ?)", (form['year'], form['month'], form['day'], form['overview'], form['detail']))
+    cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail, startTime, endTime) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)",
+                (form['year'], form['month'], form['day'], form['overview'], form['detail'], form['startTime'], form['endTime']))
     con.commit()
     con.close()
 
@@ -157,10 +202,9 @@ def deltask():
     status = request.cookies.get('status')
     if status != 'login':
         return 'Please login first' # returning a pure text
-    loginTime = request.cookies.get('time')
-    if not checkCookiePool(loginTime):
-        return 'Login status timed out' # returning a pure text
-
+    userID = request.cookies.get('id')
+    if not checkCookiePool(userID):
+        return 'Login status timed out or invalid' # returning a pure text
 
     if request.method == "GET":
         return render_template('deltask.html')
@@ -173,6 +217,31 @@ def deltask():
     con.close()
 
     return 'Task Deleted' # returning a pure text
+
+def convertDigit(x):
+    if len(x) < 2:
+        x = '0' + x
+    return x
+def convertTask(x):
+    ret = 'BEGIN:VEVENT\n'
+    ret = ret + 'DTSTART:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[5].split(':')[0]) + convertDigit(x[5].split(':')[1]) + '00Z\n'
+    ret = ret + 'DTDTEND:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[6].split(':')[0]) + convertDigit(x[6].split(':')[1]) + '00Z\n'
+    ret = ret + 'SUMMARY:' + x[3] + '\n'
+    ret = ret + 'DESCRIPTION:' + x[4] + '\n'
+    ret = ret + 'END:VEVENT\n'
+    return ret
+
+@app.route('/calendar.ics')
+def getIcs():
+    con = sql.connect("database.db")
+    cur = con.cursor()
+    ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK")
+
+    ret = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:ACMClass Calendar Beta\n'
+    for x in ls:
+        ret = ret + convertTask(x)
+    ret = ret + 'END:VCALENDAR\n'
+    return ret
 
 if __name__ == '__main__':
     app.run(debug = True)

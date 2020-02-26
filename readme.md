@@ -12,11 +12,13 @@ If you want to add a event, just execute addTask.py and enter event data.
 
 Use removeTask.py to remove a task.
 
-Visit /month/$Year/$Month to get overviews of events in that month.
+Visit /month/(Year)/(Month) to get overviews of events in that month.
 
 You can click on the link of an event to get more information about it.
 
 Edit config.py to modify administrator password and login status duration.
+
+Added iCal4j support, you can subscribe calendar events at hostname//calendar.ics.
 
 Known Bugs:
 
