@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 def takeThird(ele):
     return ele[2]
+
 def get_Task(year, month, day):
     con = sql.connect("database.db")
     cur = con.cursor()
@@ -78,7 +79,7 @@ def show_Detail(id):
     a = []
     for i in ls:
         a = i
-    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4], startTime = a[5], endTime = a[6],
+    return render_template('task.html', year = a[0], month = a[1], day = a[2], overview = a[3], detail = a[4].replace('\n', '<br>'), startTime = a[5], endTime = a[6],
                            link_month = gen_Link_Month(a[0], a[1]))
 
 @app.route('/')
@@ -227,7 +228,7 @@ def convertTask(x):
     ret = ret + 'DTSTART:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[5].split(':')[0]) + convertDigit(x[5].split(':')[1]) + '00\n'
     ret = ret + 'DTEND:' + x[0] + convertDigit(x[1]) + convertDigit(x[2]) + 'T' + convertDigit(x[6].split(':')[0]) + convertDigit(x[6].split(':')[1]) + '00\n'
     ret = ret + 'SUMMARY:' + x[3] + '\n'
-    ret = ret + 'DESCRIPTION:' + x[4] + '\n'
+    ret = ret + 'DESCRIPTION:' + x[4].replace('\r', '').replace('\n', '\\n') + '\n'
     ret = ret + 'END:VEVENT\n'
     return ret
 
