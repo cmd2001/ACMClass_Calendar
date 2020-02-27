@@ -243,5 +243,9 @@ def getIcs():
     ret = ret + 'END:VCALENDAR\n'
     return ret
 
+@app.route('/robots.txt')
+def getRobots():
+    return 'User-Agent: *\nDisallow: /\n'
+
 if __name__ == '__main__':
     app.run(debug = True)
