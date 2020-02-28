@@ -2,41 +2,76 @@
     <title>{{curMonth}}.{{curYear}}</title>
 </head>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='month.css') }}">
-<link href="../../static/bootstrap.min.css" rel="stylesheet">
-<link href="../../static/task.css" rel="stylesheet">
-<div class="calendar-container">
-    <div class="calendar-header">
-        <h1>{{curMonth}}, {{curYear}}
-            <a href={{link_prv_month}}>
-                <button type="button" class="btn btn-primary btn-sm">
-                    < Previous Month
-                </button>
-            </a>
-            <a href="../../">
-                <button type="button" class="btn btn-info btn-sm">
-                    Home Page
-                </button>
-            </a>
-            <a href={{link_nxt_month}}>
-                <button type="button" class="btn btn-primary btn-sm">
-                    Next Month >
-                </button>
-            </a>
-        </h1>
+<body>
+    <div class="d-flex flex-column">
+        <link href="../../static/moe/css/style.css" rel="stylesheet">
+        <script src="../../static/moe/js/live2d.js"></script>
+        <script type="text/javascript">
+            function set_obj() {
+                let moe = document.createElement('div');
+                let tips = document.createElement('div');
+                let live2d = document.createElement('canvas');
+                moe.id = 'platelet';
+                tips.id = 'platelet-tips';
+
+                live2d.id = 'live2d';
+                live2d.class = 'live2d';
+                live2d.width = '350';
+                live2d.height = '350';
+                moe.appendChild(tips);
+                moe.appendChild(live2d);
+                document.body.appendChild(moe);
+
+                loadlive2d("live2d", "../../static/moe/live2d/platelet/model.json");
+            }
+            set_obj()
+        </script>
+        <div id="platelet">
+            <canvas id="live2d" width="350" height="350">
+            </canvas>
+        </div>
     </div>
-    <div class="calendar"><span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
-        {% for i in range(0, 35) %}
-            <div class="day">{{days[i]}}
-                {% if tasks[i] != '' %}
-                    <section class="task">
-                        {{tasks[i]|safe}}
-                    </section>
-                {% endif %}
-            </div>
-        {% endfor %}
+
+    <link href="../../static/month.css" rel="stylesheet">
+    <link href="../../static/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/task.css" rel="stylesheet">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h1>{{curMonth}}, {{curYear}}
+                <a href={{link_prv_month}}>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        < Previous Month
+                    </button>
+                </a>
+                <a href="../../">
+                    <button type="button" class="btn btn-info btn-sm">
+                        Home Page
+                    </button>
+                </a>
+                <a href={{link_nxt_month}}>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        Next Month >
+                    </button>
+                </a>
+            </h1>
+        </div>
+        <div class="calendar"><span class="day-name">Sun</span><span class="day-name">Mon</span><span class="day-name">Tue</span><span class="day-name">Wed</span><span class="day-name">Thu</span><span class="day-name">Fri</span><span class="day-name">Sat</span>
+            {% for i in range(0, 35) %}
+                <div class="day">{{days[i]}}
+                    {% if tasks[i] != '' %}
+                        <section class="task">
+                            {{tasks[i]|safe}}
+                        </section>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
-<div class="footer">
-    <p>© ACM Class 2019</p>
-</div>
+    <div class="footer">
+        <p>
+            © ACM Class 2019<br>
+            Developers: <a href="https://amagi.yukisaki.io/" target="_blank">Amagi_Yukisaki</a> and <a href="https://gitee.com/cong258258/" target="_blank">cong258258</a>.<br>
+            Server Maintenance: <a href="https://amagi.yukisaki.io/" target="_blank">Amagi_Yukisaki</a>.
+        </p>
+    </div>
+</body>

@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, send_from_directory
 from datetime import datetime, timedelta
 import sqlite3 as sql
 import calendar
+import os
 from uuid import uuid4
-from config import ADMIN_PASSWORD, COOKIE_LIVE_TIME
+from config import ADMIN_PASSWORD, COOKIE_LIVE_TIME, DATABASE_PATH
 
 cookiePool = {}
 
@@ -14,7 +15,7 @@ def takeThird(ele):
     return ele[2]
 
 def get_Task(year, month, day):
-    con = sql.connect("database.db")
+    con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
 
     ls = cur.execute("SELECT id, overview, startTime from TASK where year = ? AND month = ? AND day = ?", (year, month, day))
@@ -73,7 +74,7 @@ def gen_Link_Month(year, month):
 
 @app.route('/task/<int:id>')
 def show_Detail(id):
-    con = sql.connect("database.db")
+    con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
     ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK where id = ?", str(id))
     a = []
@@ -88,6 +89,10 @@ def show_Index():
     curMonth = datetime.now().month
     return render_template('index.html', cur_Link = 'month/' + str(curYear) + '/' + str(curMonth))
 
+@app.route('/current')
+def show_Current():
+    link = '/month/' + str(datetime.now().year) + '/' + str(datetime.now().month)
+    return redirect(link)
 
 
 @app.route('/result', methods=("GET", "POST"))
@@ -189,7 +194,7 @@ def addtask():
     form = request.form.to_dict()
     if not valid(form):
         return 'Illegal Inout' # returning a pure text
-    con = sql.connect("database.db")
+    con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
     cur.execute("INSERT INTO TASK (id, year, month, day, overview, detail, startTime, endTime) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)",
                 (form['year'], form['month'], form['day'], form['overview'], form['detail'], form['startTime'], form['endTime']))
@@ -211,7 +216,7 @@ def deltask():
         return render_template('deltask.html')
     form = request.form.to_dict()
 
-    con = sql.connect("database.db")
+    con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
     cur.execute("DELETE FROM TASK WHERE id = ?", form['id'])
     con.commit()
@@ -234,7 +239,7 @@ def convertTask(x):
 
 @app.route('/calendar.ics')
 def getIcs():
-    con = sql.connect("database.db")
+    con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
     ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK")
 
@@ -247,6 +252,10 @@ def getIcs():
 @app.route('/robots.txt')
 def getRobots():
     return 'User-Agent: *\nDisallow: /\n'
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
     app.run(debug = True)
