@@ -8,8 +8,8 @@
 
 <body>
     <div class="d-flex flex-column">
-        <link href="../static/moe/css/style.css" rel="stylesheet">
-        <script src="../static/moe/js/live2d.js"></script>
+        <link href="https://cdn.yukisaki.io:2333/moe/css/style.css" rel="stylesheet">
+        <script src="https://cdn.yukisaki.io:2333/moe/js/live2d.js"></script>
         <script type="text/javascript">
             function set_obj() {
                 let moe = document.createElement('div');
@@ -26,7 +26,7 @@
                 moe.appendChild(live2d);
                 document.body.appendChild(moe);
 
-                loadlive2d("live2d", "../static/moe/live2d/platelet/model.json");
+                loadlive2d("live2d", "https://cdn.yukisaki.io:2333/moe/live2d/platelet/model.json");
             }
             set_obj()
         </script>

@@ -76,7 +76,7 @@ def gen_Link_Month(year, month):
 def show_Detail(id):
     con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
-    ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK where id = ?", str(id))
+    ls = cur.execute("SELECT year, month, day, overview, detail, startTime, endTime from TASK where id = ?", (str(id), ))
     a = []
     for i in ls:
         a = i
