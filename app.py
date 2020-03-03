@@ -218,7 +218,7 @@ def deltask():
 
     con = sql.connect(DATABASE_PATH)
     cur = con.cursor()
-    cur.execute("DELETE FROM TASK WHERE id = ?", form['id'])
+    cur.execute("DELETE FROM TASK WHERE id = ?", (form['id'], ))
     con.commit()
     con.close()
 
